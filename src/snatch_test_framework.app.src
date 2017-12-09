@@ -1,0 +1,15 @@
+{application, snatch_test_framework, [
+    {description, "Test Framework for Erlang Lightweight XMPP Client library"},
+    {vsn, git},
+    {registered, []},
+    {applications, [kernel,
+                    stdlib,
+                    inets,
+                    p1_utils,
+                    fast_xml,
+                    snatch]},
+    {env, []},
+    {maintainers, ["Thiago Camargo", "Manuel Rubio"]},
+    {licenses, ["Apache License 2.1"]},
+    {links, [{"Github", "https://github.com/snatch-xmpp/snatch_test_framework"}]}
+]}.

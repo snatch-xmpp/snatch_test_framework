@@ -1,0 +1,28 @@
+@author "Manuel Rubio" <manuel@altenwald.com>
+@copyright 2017 Manuel Rubio
+@title snatch_test_framework
+
+@doc
+<a href="https://travis-ci.org/snatch-xmpp/snatch_test_framework"><img src="https://img.shields.io/travis/snatch-xmpp/snatch_test_framework/master.svg" alt="Build Status"/></a>
+<a href="https://codecov.io/gh/snatch-xmpp/snatch_test_framework"><img src="https://img.shields.io/codecov/c/github/snatch-xmpp/snatch_test_framework.svg" alt="Codecov"/></a>
+<a href="https://raw.githubusercontent.com/snatch-xmpp/snatch_test_framework/master/LICENSE"><img src="https://img.shields.io/github/license/snatch-xmpp/snatch_test_framework.svg" alt="License: Apache 2.0"/></a>
+
+Test Framework for the Lightweight XMPP Client Library for Erlang.
+
+Check [the documentation here](doc/testing.md).
+
+Getting Started
+---------------
+
+If you are using rebar3 it's easy to put in the test profile the following:
+
+<pre lang="erlang">{deps, [
+    {snatch_test_framework, "0.1.0"}
+]}</pre>
+
+Troubleshooting
+---------------
+
+Feel free to create an issue in github to point a bug, flaw or improvement and even send a pull request with a specific change. Read the <a href="LICENSE">LICENSE</a> if you have doubts about what you can do with the code.
+
+Enjoy!
