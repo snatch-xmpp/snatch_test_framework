@@ -6,6 +6,7 @@
 <a href="https://travis-ci.org/snatch-xmpp/snatch_test_framework"><img src="https://img.shields.io/travis/snatch-xmpp/snatch_test_framework/master.svg" alt="Build Status"/></a>
 <a href="https://codecov.io/gh/snatch-xmpp/snatch_test_framework"><img src="https://img.shields.io/codecov/c/github/snatch-xmpp/snatch_test_framework.svg" alt="Codecov"/></a>
 <a href="https://raw.githubusercontent.com/snatch-xmpp/snatch_test_framework/master/LICENSE"><img src="https://img.shields.io/github/license/snatch-xmpp/snatch_test_framework.svg" alt="License: Apache 2.0"/></a>
+<a href="https://hex.pm/packages/snatch_test_framework"><img alt="Hex" src="https://img.shields.io/hexpm/v/snatch_test_framework.svg"/></a>
 
 Test Framework for the Lightweight XMPP Client Library for Erlang.
 

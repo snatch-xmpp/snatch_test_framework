@@ -9,6 +9,7 @@ __Authors:__ "Manuel Rubio" ([`manuel@altenwald.com`](mailto:manuel@altenwald.co
 [![Build Status](https://img.shields.io/travis/snatch-xmpp/snatch_test_framework/master.svg)](https://travis-ci.org/snatch-xmpp/snatch_test_framework)
 [![Codecov](https://img.shields.io/codecov/c/github/snatch-xmpp/snatch_test_framework.svg)](https://codecov.io/gh/snatch-xmpp/snatch_test_framework)
 [![License: Apache 2.0](https://img.shields.io/github/license/snatch-xmpp/snatch_test_framework.svg)](https://raw.githubusercontent.com/snatch-xmpp/snatch_test_framework/master/LICENSE)
+[![Hex](https://img.shields.io/hexpm/v/snatch_test_framework.svg)](https://hex.pm/packages/snatch_test_framework)
 
 Test Framework for the Lightweight XMPP Client Library for Erlang.
 
