@@ -54,10 +54,12 @@ The config section could have arguments as follow, but only for `module` option,
 ```xml
 <config>
     <snatch module="snatch_fun_test_tests">
-        <arg key="file">/tmp/data</arg>
+        <arg key="file" type="string">/tmp/data</arg>
     </snatch>
 </config>
 ```
+
+The `key` value is always translated as `atom` the kind of data you get from the content of the `arg` tag could be defined (optionally) through the `type` attribute. The common values are: `binary`, `int`, `float`, `string` or `atom`.
 
 The next section is `steps`. You can defined as many steps as you need. In this example we defined only one step. Inside we have diferent parts:
 

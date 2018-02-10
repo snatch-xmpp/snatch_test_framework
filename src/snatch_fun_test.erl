@@ -339,9 +339,16 @@ parse(#xmlel{name = <<"config">>, children = Configs}) ->
                 attrs = [{<<"module">>, Name}],
                 children = Children}) ->
             Args = lists:map(fun(#xmlel{name = <<"arg">>} = XmlEl) ->
-                #xmlel{attrs = [{<<"key">>, Key}],
-                       children = [{xmlcdata, Value}]} = XmlEl,
-                {Key, Value}
+                #xmlel{attrs = [{<<"key">>, Key}|Type],
+                       children = [{xmlcdata, BinValue}]} = XmlEl,
+                Value = case proplists:get_value(<<"type">>, Type, undefined) of
+                    <<"atom">> -> binary_to_atom(BinValue, utf8);
+                    <<"int">> -> binary_to_integer(BinValue);
+                    <<"float">> -> binary_to_float(BinValue);
+                    <<"string">> -> binary_to_list(BinValue);
+                    _ -> BinValue
+                end,
+                {binary_to_atom(Key, utf8), Value}
             end, Children),
             [{snatch, {module, Name, Args}}];
         (#xmlel{name = <<"snatch">>, attrs = [{<<"router">>, Name}]}) ->

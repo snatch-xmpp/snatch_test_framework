@@ -119,7 +119,7 @@ init(Args) ->
 terminate(_Reason, _State) ->
     ok.
 
-handle_info({received, _, #via{}}, [{<<"data">>, <<"state1">>}]) ->
+handle_info({received, _, #via{}}, [{data, <<"state1">>}]) ->
     snatch:send(fxml:element_to_binary(?QUERY_RESPONSE_STATE)),
     {noreply, []};
 
