@@ -22,7 +22,7 @@ If you are using rebar3 it's easy to put in the test profile the following:
 
 ```erlang
 {deps, [
-    {snatch_test_framework, "0.1.0"}
+    {snatch_test_framework, "0.3.0"}
 ]}
 ```
 
