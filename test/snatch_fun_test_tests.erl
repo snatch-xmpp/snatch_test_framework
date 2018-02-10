@@ -12,7 +12,8 @@
 ping_test_() ->
     snatch_fun_test:check([
         "xmpp_comp_ping",
-        "xmpp_comp_custom"
+        "xmpp_comp_custom",
+        "xmpp_comp_args"
     ]).
 
 ping_again_test_() ->
@@ -95,6 +96,13 @@ check_json([StatusOk], [StatusOk], Map) ->
                                               children = [{xmlcdata, <<"abc">>}]}
                                    ]}
                           ]}).
+-define(QUERY_RESPONSE_STATE,
+        #xmlel{name = <<"iq">>,
+               attrs = [{<<"type">>, <<"result">>},
+                        {<<"to">>, ?JID_USER},
+                        {<<"from">>, ?JID_COMP},
+                        {<<"id">>, <<"state1">>}],
+               children = []}).
 
 %% Note that the JSON code is inside of a XML CDATA field so you have to keep
 %%      the spaces as are:
@@ -105,11 +113,15 @@ check_json([StatusOk], [StatusOk], Map) ->
                  \"id\": \"test_bot\"}
             ">>).
 
-init([]) ->
-    {ok, []}.
+init(Args) ->
+    {ok, Args}.
 
 terminate(_Reason, _State) ->
     ok.
+
+handle_info({received, _, #via{}}, [{<<"data">>, <<"state1">>}]) ->
+    snatch:send(fxml:element_to_binary(?QUERY_RESPONSE_STATE)),
+    {noreply, []};
 
 handle_info({received, ?JSON, #via{}}, []) ->
     snatch:send(?STATUS_OK),

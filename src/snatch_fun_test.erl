@@ -87,9 +87,9 @@ run_start(#functional{config = Config}) ->
                 {router, ModuleBin} ->
                     Module = binary_to_atom(ModuleBin, utf8),
                     {ok, _PID} = snatch:start_link(?MODULE, Module);
-                ModuleBin ->
+                {module, ModuleBin, Args} ->
                     Module = binary_to_atom(ModuleBin, utf8),
-                    {ok, _PID} = snatch:start_link(?MODULE, Module, [])
+                    {ok, _PID} = snatch:start_link(?MODULE, Module, Args)
             end
         end}].
 
@@ -335,8 +335,15 @@ parse_file(Test) ->
 
 parse(#xmlel{name = <<"config">>, children = Configs}) ->
     lists:flatmap(fun
-        (#xmlel{name = <<"snatch">>, attrs = [{<<"module">>, Name}]}) ->
-            [{snatch, Name}];
+        (#xmlel{name = <<"snatch">>,
+                attrs = [{<<"module">>, Name}],
+                children = Children}) ->
+            Args = lists:map(fun(#xmlel{name = <<"arg">>} = XmlEl) ->
+                #xmlel{attrs = [{<<"key">>, Key}],
+                       children = [{xmlcdata, Value}]} = XmlEl,
+                {Key, Value}
+            end, Children),
+            [{snatch, {module, Name, Args}}];
         (#xmlel{name = <<"snatch">>, attrs = [{<<"router">>, Name}]}) ->
             [{snatch, {router, Name}}]
     end, Configs);

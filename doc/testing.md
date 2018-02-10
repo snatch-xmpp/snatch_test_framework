@@ -49,6 +49,16 @@ Note that if you want to start your own process to receive the events instead of
 
 The name in use (`my_router` in this example) should be a registered name for the process in charge to receive all of the events.
 
+The config section could have arguments as follow, but only for `module` option, router doesn't support this:
+
+```xml
+<config>
+    <snatch module="snatch_fun_test_tests">
+        <arg key="file">/tmp/data</arg>
+    </snatch>
+</config>
+```
+
 The next section is `steps`. You can defined as many steps as you need. In this example we defined only one step. Inside we have diferent parts:
 
 - `vars`: let us to define a dictionary. This information could be used in the rest of the sections thru the `{{...}}` syntax.
@@ -189,6 +199,19 @@ Using binaries we can see an example as follow:
     <send><![CDATA[{"result": "tomorrow"}]]></send>
 </step>
 ```
+
+Run the tests
+-------------
+
+To create the tests you only needs to include a new file with suffix `_test.erl` in the `test` directory. This file should have entries like these:
+
+```erlang
+snatch_fun_test:check([
+    "echo_test"
+]).
+```
+
+The entries in the list passed as param for the `check` function are XML files. These files should be located under `test/functional` directory.
 
 Don't hesitate to comment if this information isn't clear or you need help with this.
 
