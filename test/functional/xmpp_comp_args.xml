@@ -24,7 +24,7 @@
                 <iq type="result"
                     to="{{user}}"
                     from="{{component}}"
-                    id="{{id}}"/>
+                    id="state1"/>
             </expected>
         </step>
     </steps>

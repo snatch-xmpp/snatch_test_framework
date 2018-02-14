@@ -250,7 +250,23 @@ check_stanzas([RecvStanza|ReceivedStanzas], ExpectedStanzas, Map) ->
     end,
     NewExpectedStanzas = ExpectedStanzas -- [ExpectedStanza],
     NewMap = lists:foldl(fun
-        ({value, Key, Value}, M) -> M#{Key => Value}
+        ({value, Key, Value}, M) ->
+            case maps:get(Key, M, undefined) of
+                undefined ->
+                    M#{Key => Value};
+                OldValue when OldValue =:= Value ->
+                    M;
+                OldValue ->
+                    XMLStanza1 = fxml:element_to_binary(RecvStanza),
+                    XMLStanza2 = fxml:element_to_binary(ExpectedStanza),
+                    ?debugFmt("~n~n-----------~nAttribute not valid:~n"
+                              "~s [~s] not [~s] in:~n~s~n"
+                              "~nreceived:~n~s~n"
+                              "~nMap => ~p~n-----------~n",
+                              [Key, OldValue, Value, XMLStanza2,
+                               XMLStanza1, M]),
+                    erlang:halt(1)
+            end
     end, Map, receive_updates([])),
     check_stanzas(ReceivedStanzas, NewExpectedStanzas, NewMap).
 
