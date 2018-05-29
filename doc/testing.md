@@ -166,6 +166,15 @@ The function implemented will receive three params:
 
 - *Dictionary*. The dictionary (as a `map`) with all of the information retrieve at that moment.
 
+Log
+---
+
+It's a simple text content to be shown in the verbose output of the tests. The text is interpolated so you can use vars `{{var}}`. For example:
+
+```xml
+<log>Sending from {{from}} to {{to}}</log>
+```
+
 Sections (Steps)
 ----------------
 

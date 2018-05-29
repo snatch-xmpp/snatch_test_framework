@@ -110,6 +110,19 @@ run_step(#step{name = Name, actions = Actions}) ->
         lists:foldl(fun run_action/2, {[], [], #{}}, Actions)
       end}].
 
+run_action({log, Log}, {ExpectedStanzas, ReceivedStanzas, Map}) ->
+    LogTxt = interpolation(Log, Map,
+                           fun(Key) ->
+                                ?debugFmt("~n~n-----------~n"
+                                          "missing key: ~s~n"
+                                          "~nText entry => ~s~n"
+                                          "~nMap => ~p~n-----------~n",
+                                          [Key, Log, Map]),
+                                erlang:halt(1)
+                           end),
+    ?debugFmt("~n    * ~s...", [LogTxt]),
+    {ExpectedStanzas, ReceivedStanzas, Map};
+
 run_action({vars, VarsMap}, {ExpectedStanzas, ReceivedStanzas, Map}) ->
     NewMap = maps:merge(Map, VarsMap),
     {ExpectedStanzas, ReceivedStanzas, NewMap};
@@ -166,32 +179,39 @@ run_action({check, {M, F}}, {ExpectedStanzas, ReceivedStanzas, Map}) ->
     ok = apply(M, F, [ExpectedStanzas, ReceivedStanzas, Map]),
     {ExpectedStanzas, ReceivedStanzas, Map}.
 
+interpolation(Text, Map, ErrFun) ->
+    RE = <<"\\{\\{([^}]+)\\}\\}">>,
+    Opts = [global, {capture, all, binary}],
+    case re:run(Text, RE, Opts) of
+        {match, Keys} ->
+            lists:foldl(fun([_, Key], Txt) ->
+                case maps:get(Key, Map, undefined) of
+                    undefined ->
+                        ErrFun(Key);
+                    Val ->
+                        RKey = <<"\\{\\{", Key/binary, "\\}\\}">>,
+                        NV = re:replace(Txt, RKey, Val, [global]),
+                        iolist_to_binary(NV)
+                end
+            end, Text, Keys);
+        nomatch -> Text
+    end.
+
 process_xml_action(#xmlel{attrs = Attrs, children = Children} = El,
                    {ProcessedStanzas, Map}) ->
     ProcessedAttrs = lists:map(fun
         ({AttrKey, Value}) ->
-            RE = <<"\\{\\{([^}]+)\\}\\}">>,
-            Opts = [global, {capture, all, binary}],
-            case re:run(Value, RE, Opts) of
-                {match, Keys} ->
-                    lists:foldl(fun([_, Key], {_, AttrVal}) ->
-                        case maps:get(Key, Map, undefined) of
-                            undefined ->
-                                XMLStanza = fxml:element_to_binary(El),
-                                ?debugFmt("~n~n-----------~n"
-                                          "missing key: ~s~n"
-                                          "~nStanza => ~s~n"
-                                          "~nMap => ~p~n-----------~n",
-                                          [Key, XMLStanza, Map]),
-                                erlang:halt(1);
-                            Val ->
-                                RKey = <<"\\{\\{", Key/binary, "\\}\\}">>,
-                                NV = re:replace(AttrVal, RKey, Val, [global]),
-                                {AttrKey, iolist_to_binary(NV)}
-                        end
-                    end, {AttrKey, Value}, Keys);
-                nomatch -> {AttrKey, Value}
-            end
+            AttrVal = interpolation(Value, Map,
+                        fun(Key) ->
+                            XMLStanza = fxml:element_to_binary(El),
+                            ?debugFmt("~n~n-----------~n"
+                                      "missing key: ~s~n"
+                                      "~nStanza => ~s~n"
+                                      "~nMap => ~p~n-----------~n",
+                                      [Key, XMLStanza, Map]),
+                            erlang:halt(1)
+                        end),
+            {AttrKey, AttrVal}
     end, Attrs),
     ProcessedChildren = lists:map(fun
         ({xmlcdata, CData}) ->
@@ -425,6 +445,9 @@ parse_step(#xmlel{children = Actions} = Step) ->
     #step{name = snatch_xml:get_attr(<<"name">>, Step, <<"noname">>),
           timeout = Timeout,
           actions = lists:map(fun parse_action/1, Actions)}.
+
+parse_action(#xmlel{name = <<"log">>, children = [{xmlcdata, Log}]}) ->
+    {log, Log};
 
 parse_action(#xmlel{name = <<"vars">>, children = Vars}) ->
     Map = lists:foldl(fun
